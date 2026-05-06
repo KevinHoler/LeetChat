@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.37111.16 d17.14
+VisualStudioVersion = 17.14.37111.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp", "BlazorChatApp\BlazorChatApp\BlazorChatApp.csproj", "{0076E737-99DE-4482-8973-5501036A5CA8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp.Client", "BlazorChatApp\BlazorChatApp.Client\BlazorChatApp.Client.csproj", "{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp.Shared", "BlazorChatApp.Shared\BlazorChatApp.Shared.csproj", "{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp", "BlazorChatApp\BlazorChatApp.csproj", "{64DB28C0-01D5-3B20-459C-BA690DA5911C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp.Client", "BlazorChatApp.Client\BlazorChatApp.Client.csproj", "{668C57FE-0CAE-F352-B2B5-F66055398069}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0076E737-99DE-4482-8973-5501036A5CA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0076E737-99DE-4482-8973-5501036A5CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0076E737-99DE-4482-8973-5501036A5CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0076E737-99DE-4482-8973-5501036A5CA8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64DB28C0-01D5-3B20-459C-BA690DA5911C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64DB28C0-01D5-3B20-459C-BA690DA5911C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64DB28C0-01D5-3B20-459C-BA690DA5911C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64DB28C0-01D5-3B20-459C-BA690DA5911C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{668C57FE-0CAE-F352-B2B5-F66055398069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{668C57FE-0CAE-F352-B2B5-F66055398069}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{668C57FE-0CAE-F352-B2B5-F66055398069}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{668C57FE-0CAE-F352-B2B5-F66055398069}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
