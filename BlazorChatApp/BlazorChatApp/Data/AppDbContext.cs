@@ -29,6 +29,10 @@ namespace BlazorChatApp.Data
                 .HasForeignKey(m => m.ConversationId);
 
             modelBuilder.Entity<Message>()
+            .HasIndex(m => m.ConversationId);
+
+
+            modelBuilder.Entity<Message>()
                 .HasOne(m => m.Sender)
                 .WithMany()
                 .HasForeignKey(m => m.SenderId)

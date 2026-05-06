@@ -8,6 +8,8 @@
 
         public List<Message> Messages { get; set; } = new();
         public List<ConversationParticipant> Participants { get; set; } = new();
+        public string Name { get; set; } = string.Empty;
+        public bool IsGroup { get; set; } = false;
     }
     public class ConversationParticipant
     {
