@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp", "BlazorChat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp.Client", "BlazorChatApp\BlazorChatApp.Client\BlazorChatApp.Client.csproj", "{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorChatApp.Shared", "BlazorChatApp.Shared\BlazorChatApp.Shared.csproj", "{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2D8D718-5E6D-4F9E-8F37-9015F0157CCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA7F3129-ADA9-4D63-AF8C-DBB3439FD587}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
