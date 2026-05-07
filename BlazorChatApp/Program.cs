@@ -22,6 +22,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddTransient<TokenService>();
 
+builder.Services.AddSignalR();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
@@ -43,7 +45,9 @@ app.UseHttpsRedirection();
 
 
 app.UseAntiforgery();
+app.MapControllers();
 
+app.MapHub<BlazorChatApp.Hub.ChatHub>("/chathub");
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
