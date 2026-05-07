@@ -1,7 +1,88 @@
 ﻿@page "/register"
 
-<h3>Register</h3>
+@inject HttpClient HttpClient
+
+
+<PageTitle>Register</PageTitle>
+
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+            <h2>LeetChat - Login</h2>
+            <hr />
+            <EditForm Model="@RegisterModel" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="alert alert-danger">@errorMessage</div>
+                }
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="RegisterModel.Username" placeholder="Username" />
+                    <ValidationMessage For="() => RegisterModel.Username" />
+                </div>
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="RegisterModel.Password" placeholder="Password" />
+                    <ValidationMessage For="() => RegisterModel.Password" />
+                </div>
+                <hr />
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success float-start" @( _isLoading ? "disabled" : "" )>Register</button>
+                    <NavLink href="/" class="btn btn-outline-primary float-end">Login</NavLink>
+                    <div class="clearfix"> </div>
+                </div>
+                <hr />
+            </EditForm>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
 
 @code {
+    private RegisterDto RegisterModel { get; set; } = new();
 
+    private bool _isLoading = false;
+    private string? errorMessage = null;
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            _isLoading = true;
+            errorMessage = null;
+            var response = await HttpClient.PostAsJsonAsync<RegisterDto>("api/account/register", RegisterModel);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            }
+            else
+            {
+                string? errorContent = null;
+                try
+                {
+                    errorContent = await response.Content.ReadAsStringAsync();
+                }
+                catch
+                {
+
+
+                }
+                if (string.IsNullOrWhiteSpace(errorContent))
+                {
+                    errorContent = $"Error {response.StatusCode} - {response.ReasonPhrase}";
+                }
+                _isLoading = false;
+                errorMessage = errorContent;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            _isLoading = false;
+        }
+    }
 }

@@ -24,11 +24,13 @@
                     <InputText class="form-control" @bind-Value="LoginModel.Password" placeholder="Password" />
                     <ValidationMessage For="() => LoginModel.Password" />
                 </div>
-
+                <hr />
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-success" @( _isLoading ? "disabled" : "" )>Login</button>
-                    <NavLink href="/register" class="btn btn-outline-primary">Register</NavLink>
+                    <button type="submit" class="btn btn-success float-start" @( _isLoading ? "disabled" : "" )>Login</button>
+                    <NavLink href="/register" class="btn btn-outline-primary float-end">Register</NavLink>
+                    <div class="clearfix"> </div>
                 </div>
+                <hr />
             </EditForm>
         </div>
         <div class="col"></div>
@@ -51,7 +53,10 @@
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content);
+                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
             }
             else
             {

@@ -33,7 +33,7 @@ namespace BlazorChatApp.Controller
             {
                 Username = dto.Username,
                 PasswordHash = passwordHash,
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow
             };
 
             await _appDbContext.Users.AddAsync(user, cancellationToken);
