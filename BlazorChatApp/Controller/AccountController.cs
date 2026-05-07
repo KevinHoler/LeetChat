@@ -12,12 +12,14 @@ namespace BlazorChatApp.Controller
     public class AccountController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
-        public AccountController(AppDbContext appDbContext)
+        private readonly TokenService _tokenService;
+        public AccountController(AppDbContext appDbContext, TokenService tokenService)
         {
             _appDbContext = appDbContext;
+            _tokenService = tokenService;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto dto, CancellationToken cancellationToken)
         {
             var userNameExists = await _appDbContext.Users.AsNoTracking().AnyAsync(x => x.Username == dto.Username, cancellationToken);
@@ -30,31 +32,38 @@ namespace BlazorChatApp.Controller
             var user = new User
             {
                 Username = dto.Username,
-                PasswordHash = passwordHash
+                PasswordHash = passwordHash,
+                CreatedAt = DateTime.Now,
             };
 
-            _appDbContext.Users.Add(user);
-
+            await _appDbContext.Users.AddAsync(user, cancellationToken);
             await _appDbContext.SaveChangesAsync(cancellationToken);
 
-            return Ok();
+            return Ok(GenerateToken(user));
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto, CancellationToken cancellationToken)
         {
-            var user = await _appDbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == dto.Username, cancellationToken);
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(x => x.Username == dto.Username, cancellationToken);
             if (user == null)
             {
                 return Unauthorized("Invalid username or password.");
             }
             var isPasswordValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+
             if (!isPasswordValid)
             {
                 return Unauthorized("Invalid username or password.");
             }
-            
-            return Ok("Login successful.");
+
+            return Ok(GenerateToken(user));
+        }
+
+        private AuthResponseDto GenerateToken(User user)
+        {
+            var token = _tokenService.GenerateJWT(user);
+            return new AuthResponseDto(user.Username, token);
         }
     }
 }

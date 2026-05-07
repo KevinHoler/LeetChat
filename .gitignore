@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /BlazorChatApp/BlazorChatApp/appsettings.json
 /BlazorChatApp/appsettings.json
+/BlazorChatApp/appsettings.Development.json

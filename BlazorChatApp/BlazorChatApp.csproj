@@ -14,6 +14,7 @@
     <ProjectReference Include="..\BlazorChatApp.Client\BlazorChatApp.Client.csproj" />
     <ProjectReference Include="..\BlazorChatApp.Shared\BlazorChatApp.Shared.csproj" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
       <PrivateAssets>all</PrivateAssets>

@@ -1,12 +1,26 @@
 using BlazorChatApp.Client.Pages;
 using BlazorChatApp.Components;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using BlazorChatApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<BlazorChatApp.Data.AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = TokenService.GetTokenValidationParameters(builder.Configuration);
+});
+
+builder.Services.AddTransient<TokenService>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
