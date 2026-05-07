@@ -24,8 +24,15 @@ builder.Services.AddTransient<TokenService>();
 
 builder.Services.AddSignalR();
 
+builder.Services.AddControllers();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("https://localhost:7170")
+});
 
 var app = builder.Build();
 
@@ -43,6 +50,8 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 app.MapControllers();

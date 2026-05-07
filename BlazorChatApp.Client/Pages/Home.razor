@@ -1,7 +1,82 @@
 ﻿@page "/"
+@inject HttpClient HttpClient
 
-<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<PageTitle>LeetChat</PageTitle>
 
-Welcome to your new app.
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+            <h2>LeetChat - Login</h2>
+            <hr/>
+            <EditForm Model="@LoginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+                @if(!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="alert alert-danger">@errorMessage</div>
+                }
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="LoginModel.Username" placeholder="Username" />
+                    <ValidationMessage For="() => LoginModel.Username" />
+                </div>
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="LoginModel.Password" placeholder="Password" />
+                    <ValidationMessage For="() => LoginModel.Password" />
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success" @( _isLoading ? "disabled" : "" )>Login</button>
+                    <NavLink href="/register" class="btn btn-outline-primary">Register</NavLink>
+                </div>
+            </EditForm>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+@code{
+    private LoginDto LoginModel { get; set; } = new();
+
+    private bool _isLoading = false;
+    private string? errorMessage = null;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            _isLoading = true;
+            errorMessage = null;
+            var response = await HttpClient.PostAsJsonAsync<LoginDto>("api/account/login", LoginModel);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content);
+            }
+            else
+            {
+                string? errorContent = null;
+                try
+                {
+                    errorContent = await response.Content.ReadAsStringAsync();
+                }
+                catch
+                {
+
+
+                }
+                if(string.IsNullOrWhiteSpace(errorContent))
+                {
+                    errorContent = $"Error {response.StatusCode} - {response.ReasonPhrase}";
+                }
+                _isLoading = false;
+                errorMessage = errorContent;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+            _isLoading = false; 
+        }
+    }
+}
