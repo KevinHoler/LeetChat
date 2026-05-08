@@ -7,34 +7,54 @@
 
 <div class="container">
     <div class="row">
-        <div class="col"></div>
-        <div class="col">
-            <h2>LeetChat - Login</h2>
-            <hr />
+        <div class="col-2"></div>
+        <div class="col-8">
             <EditForm Model="@RegisterModel" OnValidSubmit="HandleRegister">
-                <DataAnnotationsValidator />
-                @if (!string.IsNullOrWhiteSpace(errorMessage))
-                {
-                    <div class="alert alert-danger">@errorMessage</div>
-                }
-                <div class="mb-3">
-                    <InputText class="form-control" @bind-Value="RegisterModel.Username" placeholder="Username" />
-                    <ValidationMessage For="() => RegisterModel.Username" />
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h2>Register</h2>
+                    </div>
+                    <div class="card-body">
+
+                        <DataAnnotationsValidator />
+                        @if (!string.IsNullOrWhiteSpace(errorMessage))
+                        {
+                            <div class="alert alert-danger">@errorMessage</div>
+                        }
+                        <div class="mb-3">
+                            <InputText class="form-label" @bind-Value="RegisterModel.Username" placeholder="Username" />
+                            <ValidationMessage For="() => RegisterModel.Username" />
+                        </div>
+                        <div class="mb-3">
+                            <InputText class="form-label" @bind-Value="RegisterModel.Password" placeholder="Password" />
+                            <ValidationMessage For="() => RegisterModel.Password" />
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="mb-3">
+                            @if (_isLoading)
+                            {
+                                <button class="btn btn-success" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Loading...
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-success float-start">Register</button>
+                            }
+
+                            <NavLink href="/" class="btn btn-outline-primary float-end">Login</NavLink>
+                            <div class="clearfix"> </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="mb-3">
-                    <InputText class="form-control" @bind-Value="RegisterModel.Password" placeholder="Password" />
-                    <ValidationMessage For="() => RegisterModel.Password" />
-                </div>
-                <hr />
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-success float-start" @( _isLoading ? "disabled" : "" )>Register</button>
-                    <NavLink href="/" class="btn btn-outline-primary float-end">Login</NavLink>
-                    <div class="clearfix"> </div>
-                </div>
-                <hr />
             </EditForm>
         </div>
-        <div class="col"></div>
+        <div class="col-2"></div>
+
     </div>
 </div>
 

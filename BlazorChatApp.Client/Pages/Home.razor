@@ -6,38 +6,58 @@
 
 <div class="container">
     <div class="row">
-        <div class="col"></div>
-        <div class="col">
-            <h2>LeetChat - Login</h2>
-            <hr/>
+        <div class="col-2"></div>
+        <div class="col-8">
             <EditForm Model="@LoginModel" OnValidSubmit="HandleLogin">
-                <DataAnnotationsValidator />
-                @if(!string.IsNullOrWhiteSpace(errorMessage))
-                {
-                    <div class="alert alert-danger">@errorMessage</div>
-                }
-                <div class="mb-3">
-                    <InputText class="form-control" @bind-Value="LoginModel.Username" placeholder="Username" />
-                    <ValidationMessage For="() => LoginModel.Username" />
+                <div class="card text-center">
+                    <div class="card-header">
+                        Welcome to LeetChat!
+                    </div>
+                    <div class="card-body">
+
+                        <DataAnnotationsValidator />
+                        @if (!string.IsNullOrWhiteSpace(errorMessage))
+                        {
+                            <div class="alert alert-danger">@errorMessage</div>
+                        }
+                        <div class="mb-3">
+                            <InputText class="form-label" @bind-Value="LoginModel.Username" placeholder="Username" />
+                            <ValidationMessage For="() => LoginModel.Username" />
+                        </div>
+                        <div class="mb-3">
+                            <InputText class="form-label" @bind-Value="LoginModel.Password" placeholder="Password" />
+                            <ValidationMessage For="() => LoginModel.Password" />
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="mb-3">
+                            @if (_isLoading)
+                            {
+                                <button class="btn btn-success" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Loading...
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-success float-start">Login</button>
+                            }
+
+                            <NavLink href="/register" class="btn btn-outline-primary float-end">Register</NavLink>
+                            <div class="clearfix"> </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="mb-3">
-                    <InputText class="form-control" @bind-Value="LoginModel.Password" placeholder="Password" />
-                    <ValidationMessage For="() => LoginModel.Password" />
-                </div>
-                <hr />
-                <div class="mb-3">
-                    <button type="submit" class="btn btn-success float-start" @( _isLoading ? "disabled" : "" )>Login</button>
-                    <NavLink href="/register" class="btn btn-outline-primary float-end">Register</NavLink>
-                    <div class="clearfix"> </div>
-                </div>
-                <hr />
             </EditForm>
         </div>
-        <div class="col"></div>
+        <div class="col-2"></div>
+
     </div>
 </div>
 
-@code{
+@code {
     private LoginDto LoginModel { get; set; } = new();
 
     private bool _isLoading = false;
@@ -70,7 +90,7 @@
 
 
                 }
-                if(string.IsNullOrWhiteSpace(errorContent))
+                if (string.IsNullOrWhiteSpace(errorContent))
                 {
                     errorContent = $"Error {response.StatusCode} - {response.ReasonPhrase}";
                 }
@@ -81,7 +101,7 @@
         catch (Exception ex)
         {
             errorMessage = ex.Message;
-            _isLoading = false; 
+            _isLoading = false;
         }
     }
 }
