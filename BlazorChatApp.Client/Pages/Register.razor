@@ -1,7 +1,7 @@
 ﻿@page "/register"
 
 @inject HttpClient HttpClient
-
+@inject NavigationManager NavigationManager
 
 <PageTitle>Register</PageTitle>
 
@@ -78,6 +78,7 @@
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
+                NavigationManager.NavigateTo("/");
             }
             else
             {

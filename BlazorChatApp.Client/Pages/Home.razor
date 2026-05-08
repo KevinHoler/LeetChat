@@ -1,6 +1,6 @@
 ﻿@page "/"
 @inject HttpClient HttpClient
-
+@inject NavigationManager NavigationManager
 
 <PageTitle>LeetChat</PageTitle>
 
@@ -58,6 +58,9 @@
 </div>
 
 @code {
+    [CascadingParameter(Name = "AuthenticationState")]
+    public AuthenticationState AuthenticationState { get; set; }
+
     private LoginDto LoginModel { get; set; } = new();
 
     private bool _isLoading = false;
@@ -77,6 +80,8 @@
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
+                AuthenticationState.LoadState(authResult);
+                NavigationManager.NavigateTo("/chat");
             }
             else
             {
