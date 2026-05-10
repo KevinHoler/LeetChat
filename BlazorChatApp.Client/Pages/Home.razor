@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject HttpClient HttpClient
+@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
 <PageTitle>LeetChat</PageTitle>
@@ -76,11 +77,11 @@
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var authResult = JsonSerializer.Deserialize<AuthResponseDto>(content, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
+                var authResult = JsonConverter.Deserialize<AuthResponseDto>(content);
                 AuthenticationState.LoadState(authResult);
+
+                var serialized = JsonConverter.Serialize(authResult);
+                await JSRuntime.InvokeVoidAsync("setInStorage", AuthenticationState.AuthStoreKey, serialized);
                 NavigationManager.NavigateTo("/chat");
             }
             else
