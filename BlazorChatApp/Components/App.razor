@@ -14,8 +14,15 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveWebAssembly" />
-    <script src="BlazorChatApp.Client/app.js"></script>
+    <Routes @rendermode="new InteractiveWebAssemblyRenderMode(prerender: false)" />
+    <script>
+        window.getFromStorage = function (key) {
+            return localStorage.getItem(key);
+        };
+        window.setInStorage = function (key, value) {
+            localStorage.setItem(key, value);
+        };
+    </script>
     <script src="_framework/blazor.web.js"></script>  
 </body>
 

@@ -13,7 +13,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authStateJson = await JSRuntime.InvokeAsync<string>("getFromStorage", AuthenticationState.AuthStoreKey);
+        var authStateJson = await JSRuntime.InvokeAsync<string>("window.getFromStorage", AuthenticationState.AuthStoreKey);
         if(!string.IsNullOrEmpty(authStateJson))
         {
 

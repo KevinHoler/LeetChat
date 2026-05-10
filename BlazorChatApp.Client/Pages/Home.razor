@@ -81,7 +81,7 @@
                 AuthenticationState.LoadState(authResult);
 
                 var serialized = JsonConverter.Serialize(authResult);
-                await JSRuntime.InvokeVoidAsync("setInStorage", AuthenticationState.AuthStoreKey, serialized);
+                await JSRuntime.InvokeVoidAsync("window.setInStorage", AuthenticationState.AuthStoreKey, serialized);
                 NavigationManager.NavigateTo("/chat");
             }
             else
