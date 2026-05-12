@@ -1,5 +1,113 @@
-﻿<h3>Messages</h3>
+﻿@* BlazorChatApp.Client/Components/Messages.razor *@
+@using BlazorChatApp.Shared.DTO
+@inject IJSRuntime JS
+
+<div class="d-flex flex-column h-100">
+
+    <!-- Konversationsrubrik -->
+    <div class="border-bottom px-3 py-2 fw-semibold bg-light">
+        @ConversationName
+    </div>
+
+    <!-- Meddelandelista -->
+    <div class="flex-grow-1 overflow-auto p-3" id="message-container">
+        @if (IsLoading)
+        {
+            <div class="text-center text-muted mt-4">Laddar...</div>
+        }
+        else
+        {
+            @foreach (var msg in ChatMessages)
+            {
+                var isMine = msg.SenderUsername == CurrentUser;
+                <div class="d-flex mb-2 @(isMine ? "justify-content-end" : "justify-content-start")">
+                    <div class="message-bubble @(isMine ? "mine" : "theirs")">
+                        @if (!isMine)
+                        {
+                            <div class="small fw-semibold mb-1">@msg.SenderUsername</div>
+                        }
+                        <div>@msg.Content</div>
+                        <div class="small text-end mt-1 opacity-75">
+                            @msg.Timestamp.ToLocalTime().ToString("HH:mm")
+                        </div>
+                    </div>
+                </div>
+            }
+            <div id="message-bottom"></div>
+        }
+    </div>
+
+    <!-- Inmatningsfält -->
+    <div class="border-top p-2">
+        <div class="input-group">
+            <input class="form-control"
+                   placeholder="Skriv ett meddelande..."
+                   @bind="_input"
+                   @onkeydown="OnKeyDown" />
+            <button class="btn btn-danger" @onclick="Send" disabled="@string.IsNullOrWhiteSpace(_input)">
+                Skicka
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .message-bubble {
+        max-width: 70%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        word-break: break-word;
+    }
+
+        .message-bubble.mine {
+            background: #dc3545;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message-bubble.theirs {
+            background: #f1f0f0;
+            border-bottom-left-radius: 2px;
+        }
+</style>
 
 @code {
+    [Parameter] public int ConversationId { get; set; }
+    [Parameter] public string ConversationName { get; set; } = "";
+    [Parameter] public string CurrentUser { get; set; } = "";
+    [Parameter] public List<MessageDto> ChatMessages { get; set; } = new();
+    [Parameter] public EventCallback<string> OnSendMessage { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
 
+    private string _input = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ScrollToBottom();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await ScrollToBottom();
+    }
+
+    private async Task Send()
+    {
+        if (string.IsNullOrWhiteSpace(_input)) return;
+        var msg = _input.Trim();
+        _input = "";
+        await OnSendMessage.InvokeAsync(msg);
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey)
+            await Send();
+    }
+
+    private async Task ScrollToBottom()
+    {
+        try { await JS.InvokeVoidAsync("scrollToElement", "message-bottom"); }
+        catch { }
+    }
 }

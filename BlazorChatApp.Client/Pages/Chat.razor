@@ -1,34 +1,53 @@
 ﻿@page "/chat"
 @using Microsoft.AspNetCore.SignalR.Client
+@using BlazorChatApp.Shared.DTO
 @inject NavigationManager NavigationManager
-
+@inject HttpClient HttpClient
 @implements IAsyncDisposable
 
-<h3>Chat @AuthenticationState.Name</h3>
-
-<div class="container">
-    <div class="card">
+<div class="container-fluid vh-100 d-flex flex-column p-0">
+    <div class="card flex-grow-1 d-flex flex-column" style="overflow:hidden">
+        
+        <!-- Header -->
         <div class="card-header bg-danger text-white">
-            <div class="row">
-                <div class="col">
-                    <h2>LeetChat</h2>
-                </div>
-                <div class="col">
-                    <button type="button" class="btn btn-warning float-end">Logout</button>
-                    <label class="float-end me-2 mt-2">Welcome @AuthenticationState.Name</label>
+            <div class="row align-items-center">
+                <div class="col"><h5 class="mb-0">LeetChat</h5></div>
+                <div class="col-auto">
+                    <span class="me-3">@AuthenticationState.Name</span>
+                    <button class="btn btn-warning btn-sm" @onclick="Logout">Logout</button>
                 </div>
             </div>
+        </div>
+
+        <div class="card-body p-0 d-flex flex-grow-1" style="overflow:hidden">
             
-        </div> 
-        <div class="card-body message-window"> 
-            <div class="row">
-                
-                <div class="col-3">
-                    <UserList Users="Users"/>
-                </div>
-                <div class="col-9">
-                    <Messages/>
-                </div>
+            <!-- Vänster: konversationslista + sökning -->
+            <div class="border-end d-flex flex-column" style="width:280px; min-width:280px;">
+                <ConversationSidebar
+                    Conversations="Conversations"
+                    SelectedConversationId="_selectedConversationId"
+                    OnSelectConversation="SelectConversation"
+                    OnStartConversation="StartConversation" />
+            </div>
+
+            <!-- Höger: meddelandevy -->
+            <div class="flex-grow-1 d-flex flex-column" style="overflow:hidden">
+                @if (_selectedConversationId.HasValue)
+                {
+                    <Messages
+                        ConversationId="_selectedConversationId.Value"
+                        ConversationName="@(Conversations.FirstOrDefault(c => c.Id == _selectedConversationId)?.Name ?? "")"
+                        CurrentUser="@AuthenticationState.Name"
+                        ChatMessages="_messages"
+                        OnSendMessage="SendMessage"
+                        IsLoading="_loadingMessages" />
+                }
+                else
+                {
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                        <p>Välj en konversation eller sök efter en användare</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -36,35 +55,116 @@
 
 @code {
     [CascadingParameter(Name = "AuthenticationState")]
-    public AuthenticationState AuthenticationState { get; set; }
+    public AuthenticationState AuthenticationState { get; set; } = null!;
 
-    private HubConnection? _hubConnection;
+    private HubConnection? _hub;
+    private List<ConversationDto> Conversations { get; set; } = new();
+    private List<MessageDto> _messages = new();
+    private int? _selectedConversationId;
+    private bool _loadingMessages;
 
-    public IEnumerable<string> Users { get; set; } = Enumerable.Empty<string>();
-
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-
         if (!AuthenticationState.IsAuthenticated)
         {
             NavigationManager.NavigateTo("/");
+            return;
         }
-        else
-        {
-            _hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+
+        await LoadConversations();
+        await ConnectHub();
+    }
+
+    private async Task LoadConversations()
+    {
+        var result = await HttpClient.GetFromJsonAsync<List<ConversationDto>>("api/conversation");
+        Conversations = result ?? new();
+    }
+
+    private async Task ConnectHub()
+    {
+        _hub = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"), opts =>
+            {
+                opts.AccessTokenProvider = () => Task.FromResult<string?>(AuthenticationState.Token);
+            })
+            .WithAutomaticReconnect()
             .Build();
 
-            await _hubConnection.StartAsync();
-        }
+        _hub.On<MessageDto>("ReceiveMessage", msg =>
+        {
+            if (msg.ConversationId == _selectedConversationId)
+            {
+                _messages.Add(msg);
+                InvokeAsync(StateHasChanged);
+            }
+            // Uppdatera "senaste meddelande" i sidebaren
+            var conv = Conversations.FirstOrDefault(c => c.Id == msg.ConversationId);
+            if (conv != null)
+            {
+                var idx = Conversations.IndexOf(conv);
+                Conversations[idx] = conv with { LastMessage = msg.Content, LastActivity = msg.Timestamp };
+                Conversations = Conversations.OrderByDescending(c => c.LastActivity).ToList();
+                InvokeAsync(StateHasChanged);
+            }
+        });
+
+        _hub.On<ConversationDto>("ConversationStarted", conv =>
+        {
+            Conversations.Insert(0, conv);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await _hub.StartAsync();
+    }
+
+    private async Task SelectConversation(int conversationId)
+    {
+        _selectedConversationId = conversationId;
+        _loadingMessages = true;
+        _messages = new();
+        StateHasChanged();
+
+        var msgs = await HttpClient.GetFromJsonAsync<List<MessageDto>>($"api/conversation/{conversationId}/messages");
+        _messages = msgs ?? new();
+        _loadingMessages = false;
+        StateHasChanged();
+    }
+
+    private async Task StartConversation(int targetUserId)
+    {
+        var response = await HttpClient.PostAsJsonAsync("api/conversation/start", new StartConversationDto(targetUserId));
+        if (!response.IsSuccessStatusCode) return;
+
+        var conv = await response.Content.ReadFromJsonAsync<ConversationDto>();
+        if (conv == null) return;
+
+        // Lägg till om den inte redan finns
+        if (!Conversations.Any(c => c.Id == conv.Id))
+            Conversations.Insert(0, conv);
+
+        // Gå med i SignalR-gruppen
+        if (_hub is not null)
+            await _hub.InvokeAsync("JoinConversation", conv.Id);
+
+        await SelectConversation(conv.Id);
+    }
+
+    private async Task SendMessage(string content)
+    {
+        if (_hub is null || _selectedConversationId is null || string.IsNullOrWhiteSpace(content)) return;
+        await _hub.InvokeAsync("SendMessage", _selectedConversationId.Value, content);
+    }
+
+    private void Logout()
+    {
+        // Rensa state och navigera till login
+        NavigationManager.NavigateTo("/");
     }
 
     public async ValueTask DisposeAsync()
-        {
-            if (_hubConnection is not null)
-            {
-                await _hubConnection.DisposeAsync();
-            }
+    {
+        if (_hub is not null)
+            await _hub.DisposeAsync();
     }
 }

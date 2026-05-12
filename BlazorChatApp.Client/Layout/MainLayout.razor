@@ -1,30 +1,27 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject AuthenticationState AuthenticationState
 @inherits LayoutComponentBase
 
 <CascadingValue Value="AuthenticationState" Name="AuthenticationState">
-<div class="container-fluid">
-    @Body
-</div>
+    <div class="container-fluid">
+        @Body
+    </div>
 </CascadingValue>
 
-@code{
-    public AuthenticationState AuthenticationState { get; set; } = new();
+@code {
 
     protected override async Task OnInitializedAsync()
     {
-        var authStateJson = await JSRuntime.InvokeAsync<string>("window.getFromStorage", AuthenticationState.AuthStoreKey);
-        if(!string.IsNullOrEmpty(authStateJson))
-        {
+        var authStateJson = await JSRuntime.InvokeAsync<string>(
+            "window.getFromStorage", AuthenticationState.AuthStoreKey);
 
+        if (!string.IsNullOrEmpty(authStateJson))
+        {
             var authState = JsonConverter.Deserialize<AuthResponseDto>(authStateJson);
             AuthenticationState.LoadState(authState);
-
-            if(AuthenticationState.IsAuthenticated)
-            {
+            if (AuthenticationState.IsAuthenticated)
                 NavigationManager.NavigateTo("/chat");
-            };
         }
     }
 }
-

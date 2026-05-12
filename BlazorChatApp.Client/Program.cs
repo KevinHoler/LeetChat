@@ -1,10 +1,21 @@
+using BlazorChatApp.Client;
+using BlazorChatApp.Client.States;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddScoped(sp => new HttpClient
+builder.Services.AddScoped<AuthenticationState>();   // om den inte redan är registrerad
+builder.Services.AddScoped<AuthTokenHandler>();
+
+builder.Services.AddScoped(sp =>
 {
-    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+    var handler = sp.GetRequiredService<AuthTokenHandler>();
+    handler.InnerHandler = new HttpClientHandler();
+
+    return new HttpClient(handler)
+    {
+        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+    };
 });
 
 await builder.Build().RunAsync();

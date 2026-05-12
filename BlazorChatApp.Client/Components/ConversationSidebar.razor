@@ -1,0 +1,122 @@
+﻿@* BlazorChatApp.Client/Components/ConversationSidebar.razor *@
+@using BlazorChatApp.Shared.DTO
+@inject HttpClient HttpClient
+
+<!-- Sökruta -->
+<div class="p-2 border-bottom">
+    <div class="input-group input-group-sm">
+        <input type="text"
+               class="form-control"
+               placeholder="Sök användare..."
+               value="@_searchQuery"
+               @oninput="OnSearchInput" />
+        @if (!string.IsNullOrWhiteSpace(_searchQuery))
+        {
+            <button class="btn btn-outline-secondary" @onclick="ClearSearch">✕</button>
+        }
+    </div>
+</div>
+
+<!-- Sökresultat -->
+@if (_searchResults.Any())
+{
+    <div class="border-bottom">
+        <div class="px-2 pt-1 text-muted small">Användare</div>
+        @foreach (var user in _searchResults)
+        {
+            <div class="px-2 py-2 d-flex align-items-center chat-item"
+                 @onclick="() => StartConversationClicked(user.Id)"
+                 style="cursor:pointer">
+                <div class="avatar me-2">@user.Username[0]</div>
+                <span>@user.Username</span>
+            </div>
+        }
+    </div>
+}
+
+<!-- Konversationslista -->
+<div class="flex-grow-1 overflow-auto">
+    <div class="px-2 pt-1 text-muted small">Konversationer</div>
+    @if (!Conversations.Any())
+    {
+        <div class="text-muted small px-2 py-3">Inga konversationer ännu</div>
+    }
+    @foreach (var conv in Conversations)
+    {
+        <div class="px-2 py-2 chat-item @(conv.Id == SelectedConversationId ? "active" : "")"
+             @onclick="() => OnSelectConversation.InvokeAsync(conv.Id)"
+             style="cursor:pointer">
+            <div class="d-flex">
+                <div class="avatar me-2">@conv.Name[0]</div>
+                <div class="overflow-hidden">
+                    <div class="fw-semibold text-truncate">@conv.Name</div>
+                    <div class="text-muted small text-truncate">@conv.LastMessage</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .chat-item:hover { background: rgba(0,0,0,0.05); }
+    .chat-item.active { background: rgba(220,53,69,0.1); }
+    .avatar {
+        width: 36px; height: 36px; min-width: 36px;
+        background: #dc3545; color: white;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: bold; text-transform: uppercase;
+    }
+</style>
+
+@code {
+    [Parameter] public List<ConversationDto> Conversations { get; set; } = new();
+    [Parameter] public int? SelectedConversationId { get; set; }
+    [Parameter] public EventCallback<int> OnSelectConversation { get; set; }
+    [Parameter] public EventCallback<int> OnStartConversation { get; set; }
+
+    private string _searchQuery = "";
+    private List<UserSearchResultDto> _searchResults = new();
+    private CancellationTokenSource? _searchCts;
+
+private async Task OnSearchInput(ChangeEventArgs e)
+{
+    _searchQuery = e.Value?.ToString() ?? "";
+
+    _searchCts?.Cancel();
+    _searchCts = new CancellationTokenSource();
+
+    if (_searchQuery.Length < 2)
+    {
+        _searchResults = new();
+        return;
+    }
+
+    try
+    {
+        await Task.Delay(300, _searchCts.Token);
+
+        var results = await HttpClient.GetFromJsonAsync<List<UserSearchResultDto>>(
+            $"api/user/search?q={Uri.EscapeDataString(_searchQuery)}",
+            _searchCts.Token);
+
+        _searchResults = results ?? new();
+    }
+    catch (OperationCanceledException)
+    {
+        // expected during typing
+    }
+}
+
+    private async Task StartConversationClicked(int userId)
+    {
+        ClearSearch();
+        await OnStartConversation.InvokeAsync(userId);
+    }
+
+    private void ClearSearch()
+    {
+        _searchQuery = "";
+        _searchResults = new();
+    }
+}

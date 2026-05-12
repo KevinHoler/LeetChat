@@ -22,6 +22,10 @@
         window.setInStorage = function (key, value) {
             localStorage.setItem(key, value);
         };
+                window.scrollToElement = (id) => {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        };
     </script>
     <script src="_framework/blazor.web.js"></script>  
 </body>
