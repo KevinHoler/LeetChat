@@ -1,5 +1,9 @@
 ﻿@page "/chat"
+@using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
+
+@implements IAsyncDisposable
+
 <h3>Chat @AuthenticationState.Name</h3>
 
 <div class="container">
@@ -33,9 +37,12 @@
 @code {
     [CascadingParameter(Name = "AuthenticationState")]
     public AuthenticationState AuthenticationState { get; set; }
+
+    private HubConnection? _hubConnection;
+
     public IEnumerable<string> Users { get; set; } = Enumerable.Empty<string>();
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         base.OnInitialized();
 
@@ -43,5 +50,21 @@
         {
             NavigationManager.NavigateTo("/");
         }
+        else
+        {
+            _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+            await _hubConnection.StartAsync();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+        {
+            if (_hubConnection is not null)
+            {
+                await _hubConnection.DisposeAsync();
+            }
     }
 }
