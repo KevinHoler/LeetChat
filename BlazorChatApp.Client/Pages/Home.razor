@@ -5,52 +5,48 @@
 
 <PageTitle>LeetChat</PageTitle>
 
-<div class="container">
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-8">
-            <EditForm Model="@LoginModel" OnValidSubmit="HandleLogin">
-                <div class="card text-center">
-                    <div class="card-header">
-                        Welcome to LeetChat!
-                    </div>
-                    <div class="card-body">
-                        <DataAnnotationsValidator />
-                        @if (!string.IsNullOrWhiteSpace(errorMessage))
-                        {
-                            <div class="alert alert-danger">@errorMessage</div>
-                        }
-                        <div class="mb-3">
-                            <InputText class="form-label" @bind-Value="LoginModel.Username" placeholder="Username" />
-                            <ValidationMessage For="() => LoginModel.Username" />
-                        </div>
-                        <div class="mb-3">
-                            <InputText class="form-label" @bind-Value="LoginModel.Password" placeholder="Password" />
-                            <ValidationMessage For="() => LoginModel.Password" />
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="mb-3">
-                            @if (_isLoading)
-                            {
-                                <button class="btn btn-success" type="button" disabled>
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                    Loading...
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="submit" class="btn btn-success float-start">Login</button>
-                            }
-                            <NavLink href="/register" class="btn btn-outline-primary float-end">Register</NavLink>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </EditForm>
-        </div>
-        <div class="col-2"></div>
+<div class="login-terminal">
+
+    <div class="terminal-header">
+        > LEETCHAT SYSTEM LOGIN _
     </div>
+
+    <EditForm Model="@LoginModel" OnValidSubmit="HandleLogin">
+
+        <DataAnnotationsValidator />
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="terminal-error">
+                ERROR: @errorMessage
+            </div>
+        }
+
+        <div class="terminal-field">
+            <span>> username:</span>
+            <InputText @bind-Value="LoginModel.Username" />
+        </div>
+
+        <div class="terminal-field">
+            <span>> password:</span>
+            <InputText type="password" @bind-Value="LoginModel.Password" />
+        </div>
+
+        <div class="terminal-actions">
+            @if (_isLoading)
+            {
+                <span class="loading">[ AUTHENTICATING SYSTEM... ]</span>
+            }
+            else
+            {
+                <button type="submit">[ LOGIN ]</button>
+            }
+
+            <NavLink href="/register">[ REGISTER ]</NavLink>
+        </div>
+
+    </EditForm>
+
 </div>
 
 @code {

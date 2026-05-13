@@ -6,47 +6,46 @@
 @inject IAuthService Auth
 @implements IAsyncDisposable
 
-<div class="container-fluid vh-100 d-flex flex-column p-0">
-    <div class="card flex-grow-1 d-flex flex-column" style="overflow:hidden">
+<div class="chat-os">
 
-        <div class="card-header bg-danger text-white">
-            <div class="row align-items-center">
-                <div class="col"><h5 class="mb-0">LeetChat</h5></div>
-                <div class="col-auto">
-                    <span class="me-3">@Auth.Name</span>
-                    <button class="btn btn-warning btn-sm" @onclick="Logout">Logout</button>
-                </div>
-            </div>
-        </div>
+    <div class="os-topbar">
+        <span>> LEETCHAT TERMINAL</span>
 
-        <div class="card-body p-0 d-flex flex-grow-1" style="overflow:hidden">
-
-            <div class="border-end d-flex flex-column" style="width:280px; min-width:280px;">
-                <ConversationSidebar Conversations="Conversations"
-                                     SelectedConversationId="_selectedConversationId"
-                                     OnSelectConversation="SelectConversation"
-                                     OnStartConversation="StartConversation" />
-            </div>
-
-            <div class="flex-grow-1 d-flex flex-column" style="overflow:hidden">
-                @if (_selectedConversationId.HasValue)
-                {
-                    <Messages ConversationId="_selectedConversationId.Value"
-                              ConversationName="@(Conversations.FirstOrDefault(c => c.Id == _selectedConversationId)?.Name ?? "")"
-                              CurrentUser="@Auth.Name"
-                              ChatMessages="_messages"
-                              OnSendMessage="SendMessage"
-                              IsLoading="_loadingMessages" />
-                }
-                else
-                {
-                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
-                        <p>Välj en konversation eller sök efter en användare</p>
-                    </div>
-                }
-            </div>
+        <div class="os-user">
+            @Auth.Name
+            <button @onclick="Logout">[ EXIT ]</button>
         </div>
     </div>
+
+    <div class="os-body">
+
+        <div class="os-sidebar">
+            <ConversationSidebar Conversations="Conversations"
+                                 SelectedConversationId="_selectedConversationId"
+                                 OnSelectConversation="SelectConversation"
+                                 OnStartConversation="StartConversation" />
+        </div>
+
+        <div class="os-chat">
+            @if (_selectedConversationId.HasValue)
+            {
+                <Messages ConversationId="_selectedConversationId.Value"
+                          ConversationName="@(Conversations.FirstOrDefault(c => c.Id == _selectedConversationId)?.Name ?? "")"
+                          CurrentUser="@Auth.Name"
+                          ChatMessages="_messages"
+                          OnSendMessage="SendMessage"
+                          IsLoading="_loadingMessages" />
+            }
+            else
+            {
+                <div class="empty-state">
+                    SELECT CONVERSATION OR INITIATE CONNECTION...
+                </div>
+            }
+        </div>
+
+    </div>
+
 </div>
 
 @code {

@@ -58,3 +58,174 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+#matrixCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+
+app, #app {
+    position: relative;
+    z-index: 1;
+}
+body {
+    background: black;
+    color: #33ff66;
+    font-family: "Fira Code", monospace;
+}
+
+.login-terminal {
+    width: 500px;
+    margin: 80px auto;
+    padding: 20px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(0,255,0,0.2);
+    backdrop-filter: blur(10px);
+    animation: boot 0.4s ease-out;
+}
+
+.terminal-header {
+    margin-bottom: 20px;
+    color: #00ff88;
+    font-weight: bold;
+    animation: boot 0.4s ease-out;
+}
+
+.terminal-field {
+    margin-bottom: 15px;
+}
+
+    .terminal-field span {
+        display: block;
+        margin-bottom: 5px;
+        opacity: 0.7;
+    }
+
+.login-terminal input {
+    width: 100%;
+    background: black;
+    border: 1px solid rgba(0,255,0,0.3);
+    color: #33ff66;
+    padding: 8px;
+    outline: none;
+}
+
+.terminal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+    .terminal-actions button,
+    .terminal-actions a {
+        background: transparent;
+        border: 1px solid #33ff66;
+        color: #33ff66;
+        padding: 6px 12px;
+        text-decoration: none;
+    }
+
+        .terminal-actions button:hover,
+        .terminal-actions a:hover {
+            background: rgba(0,255,0,0.1);
+        }
+
+.terminal-error {
+    color: red;
+    margin-bottom: 15px;
+}
+
+.loading {
+    color: #00ff88;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+input {
+    caret-color: #33ff66;
+}
+
+@keyframes boot {
+    from {
+        transform: scale(0.98);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.chat-os {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: "Fira Code", monospace;
+    color: #33ff66;
+}
+
+.os-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.85);
+    border-bottom: 1px solid rgba(0,255,0,0.25);
+    color: #33ff66;
+    font-family: "Fira Code", monospace;
+    z-index: 10;
+}
+
+.os-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.os-sidebar {
+    width: 280px;
+    background: rgba(0,0,0,0.4);
+    border-right: 1px solid rgba(0,255,0,0.2);
+    backdrop-filter: blur(8px);
+}
+
+.os-chat {
+    flex: 1;
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+}
+
+.empty-state {
+    margin: auto;
+    opacity: 0.5;
+}
+
+.os-user button {
+    background: transparent;
+    border: 1px solid #33ff66;
+    color: #33ff66;
+    padding: 4px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+    .os-user button:hover {
+        background: rgba(0,255,0,0.1);
+    }
+
+button, input {
+    font-family: "Fira Code", monospace;
+}
