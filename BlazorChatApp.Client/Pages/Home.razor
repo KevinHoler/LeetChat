@@ -1,7 +1,7 @@
 ﻿@page "/"
 @inject HttpClient HttpClient
-@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject IAuthService Auth
 
 <PageTitle>LeetChat</PageTitle>
 
@@ -15,7 +15,6 @@
                         Welcome to LeetChat!
                     </div>
                     <div class="card-body">
-
                         <DataAnnotationsValidator />
                         @if (!string.IsNullOrWhiteSpace(errorMessage))
                         {
@@ -29,7 +28,6 @@
                             <InputText class="form-label" @bind-Value="LoginModel.Password" placeholder="Password" />
                             <ValidationMessage For="() => LoginModel.Password" />
                         </div>
-
                     </div>
                     <div class="card-footer">
                         <div class="mb-3">
@@ -44,26 +42,19 @@
                             {
                                 <button type="submit" class="btn btn-success float-start">Login</button>
                             }
-
                             <NavLink href="/register" class="btn btn-outline-primary float-end">Register</NavLink>
-                            <div class="clearfix"> </div>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
-
                 </div>
             </EditForm>
         </div>
         <div class="col-2"></div>
-
     </div>
 </div>
 
 @code {
-    [CascadingParameter(Name = "AuthenticationState")]
-    public AuthenticationState AuthenticationState { get; set; }
-
     private LoginDto LoginModel { get; set; } = new();
-
     private bool _isLoading = false;
     private string? errorMessage = null;
 
@@ -73,35 +64,22 @@
         {
             _isLoading = true;
             errorMessage = null;
-            var response = await HttpClient.PostAsJsonAsync<LoginDto>("api/account/login", LoginModel);
+
+            var response = await HttpClient.PostAsJsonAsync("api/account/login", LoginModel);
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var authResult = JsonConverter.Deserialize<AuthResponseDto>(content);
-                AuthenticationState.LoadState(authResult);
-
-                var serialized = JsonConverter.Serialize(authResult);
-                await JSRuntime.InvokeVoidAsync("window.setInStorage", AuthenticationState.AuthStoreKey, serialized);
+                await Auth.LoginAsync(authResult);
                 NavigationManager.NavigateTo("/chat");
             }
             else
             {
-                string? errorContent = null;
-                try
-                {
-                    errorContent = await response.Content.ReadAsStringAsync();
-                }
-                catch
-                {
-
-
-                }
-                if (string.IsNullOrWhiteSpace(errorContent))
-                {
-                    errorContent = $"Error {response.StatusCode} - {response.ReasonPhrase}";
-                }
+                var errorContent = await response.Content.ReadAsStringAsync();
+                errorMessage = string.IsNullOrWhiteSpace(errorContent)
+                    ? $"Error {response.StatusCode} - {response.ReasonPhrase}"
+                    : errorContent;
                 _isLoading = false;
-                errorMessage = errorContent;
             }
         }
         catch (Exception ex)
