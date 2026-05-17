@@ -24,12 +24,13 @@
                             <span class="username">@msg.SenderUsername</span>
                             <span class="time">@msg.Timestamp.ToLocalTime():HH:mm</span>
                         </div>
-
-                        <div class="content">@msg.Content</div>
+                        <span class="content">@msg.Content</span>
                     }
-
-                    <span class="content">@msg.Content</span>
-                    <span class="time">@msg.Timestamp.ToLocalTime()</span>
+                    else
+                    {
+                        <span class="content">@msg.Content</span>
+                        <span class="time">@msg.Timestamp.ToLocalTime()</span>
+                    }
                 </div>
             }
             <div id="message-bottom"></div>
@@ -43,6 +44,7 @@
         <input class="terminal-field"
                placeholder="type message..."
                @bind="_input"
+               @bind:event="oninput"
                @onkeydown="OnKeyDown" />
 
         <button class="terminal-btn"
@@ -155,7 +157,7 @@
         if (string.IsNullOrWhiteSpace(_input)) return;
         var msg = _input.Trim();
         _input = "";
-        await OnSendMessage.InvokeAsync(Leetify(msg));
+        await OnSendMessage.InvokeAsync(msg);
     }
 
     private async Task OnKeyDown(KeyboardEventArgs e)
@@ -168,29 +170,5 @@
     {
         try { await JS.InvokeVoidAsync("scrollToElement", "message-bottom"); }
         catch { }
-    }
-
-    private string Leetify(string text)
-    {
-        var leetText = text.ToCharArray();
-
-        for (int i = 0; i < leetText.Length; i++)
-        {
-            leetText[i] = leetText[i] switch
-            {
-                'a' or 'A' => '4',
-                'b' or 'B' => '8',
-                'c' or 'C' => '(',
-                'e' or 'E' => '3',
-                'g' or 'G' => '6',
-                'h' or 'H' => '#',
-                'i' or 'I' => '1',
-                'o' or 'O' => '0',
-                's' or 'S' => '5',
-                't' or 'T' => '7',
-                _ => leetText[i]
-            };
-        }
-        return new string(leetText);
     }
 }

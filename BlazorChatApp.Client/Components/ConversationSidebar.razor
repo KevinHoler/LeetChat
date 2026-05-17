@@ -37,10 +37,10 @@
 }
 
 <div class="flex-grow-1 overflow-auto">
-    <div class="px-2 pt-1 text-muted small">Konversationer</div>
+    <div class="px-2 pt-1 text-muted small">CONVERSATIONS</div>
     @if (!Conversations.Any())
     {
-        <div class="text-muted small px-2 py-3">Inga konversationer ännu</div>
+        <div class="text-muted small px-2 py-3">NO CONVERSATIONS YET</div>
     }
     @foreach (var conv in Conversations)
     {

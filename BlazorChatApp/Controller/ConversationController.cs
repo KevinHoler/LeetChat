@@ -25,7 +25,6 @@ namespace BlazorChatApp.Controller
             _hub = hub;
         }
 
-        // Hämta alla konversationer för inloggad användare
         [HttpGet]
         public async Task<IActionResult> GetConversations(CancellationToken ct)
         {
@@ -55,7 +54,6 @@ namespace BlazorChatApp.Controller
             return Ok(dtos);
         }
 
-        // Hämta meddelanden för en konversation (med paginering)
         [HttpGet("{id:int}/messages")]
         public async Task<IActionResult> GetMessages(int id, [FromQuery] int limit = 50, [FromQuery] int? beforeId = null, CancellationToken ct = default)
         {
@@ -80,7 +78,6 @@ namespace BlazorChatApp.Controller
             return Ok(messages);
         }
 
-        // Starta (eller hämta befintlig) 1-till-1 konversation
         [HttpPost("start")]
         public async Task<IActionResult> StartConversation(StartConversationDto dto, CancellationToken ct)
         {
@@ -91,7 +88,6 @@ namespace BlazorChatApp.Controller
             var targetUser = await _db.Users.FindAsync([dto.TargetUserId], ct);
             if (targetUser == null) return NotFound("Användaren hittades inte.");
 
-            // Kolla om 1-till-1 konversation redan finns
             var existingId = await _db.ConversationParticipants
                 .Where(cp => cp.UserId == userId)
                 .Select(cp => cp.ConversationId)
@@ -109,7 +105,6 @@ namespace BlazorChatApp.Controller
                 return Ok(new ConversationDto(existingId, targetUser.Username, false, "", existing!.CreatedAt));
             }
 
-            // Skapa ny konversation
             var conversation = new Conversation { CreatedAt = DateTime.UtcNow };
             _db.Conversations.Add(conversation);
             await _db.SaveChangesAsync(ct);
@@ -124,7 +119,6 @@ namespace BlazorChatApp.Controller
             var convDto = new ConversationDto(conversation.Id, targetUser.Username, false, "", conversation.CreatedAt);
             var targetConvDto = new ConversationDto(conversation.Id, myUsername, false, "", conversation.CreatedAt);
 
-            // Notifiera mottagaren om den är online
             await _hub.Clients.Group($"user_{dto.TargetUserId}").ConversationStarted(targetConvDto);
 
             return Ok(convDto);
