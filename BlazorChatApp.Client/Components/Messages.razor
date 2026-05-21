@@ -24,11 +24,19 @@
                             <span class="username">@msg.SenderUsername</span>
                             <span class="time">@msg.Timestamp.ToLocalTime():HH:mm</span>
                         </div>
-                        <span class="content">@msg.Content</span>
+                        <span class="content"
+                              @onmouseenter="() => hoveredId = msg.Id"
+                              @onmouseleave="() => hoveredId = null">
+                            @(hoveredId == msg.Id ? LeetifyText.Leetify(msg.Content) : msg.Content)
+                        </span>
                     }
                     else
                     {
-                        <span class="content">@msg.Content</span>
+                        <span class="content"
+                              @onmouseenter="() => hoveredId = msg.Id"
+                              @onmouseleave="() => hoveredId = null">
+                            @(hoveredId == msg.Id ? LeetifyText.Leetify(msg.Content) : msg.Content)
+                        </span>
                         <span class="time">@msg.Timestamp.ToLocalTime()</span>
                     }
                 </div>
@@ -49,8 +57,10 @@
 
         <button class="terminal-btn"
                 @onclick="Send"
+                @onmouseenter="() => _btnHovered = true"
+                @onmouseleave="() => _btnHovered = false"
                 disabled="@string.IsNullOrWhiteSpace(_input)">
-            SEND
+            @(_btnHovered? LeetifyText.Leetify("SEND") : "SEND")
         </button>
 
     </div>
@@ -140,16 +150,26 @@
     [Parameter] public EventCallback<string> OnSendMessage { get; set; }
     [Parameter] public bool IsLoading { get; set; }
 
+    private int? hoveredId = null;
+    private bool _btnHovered = false;
+
     private string _input = "";
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await ScrollToBottom();
-    }
+    private int _lastMessageCount = 0;
+    private int _lastConversationId = -1;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await ScrollToBottom();
+        var conversationChanged = ConversationId != _lastConversationId;
+        var messageCountChanged = ChatMessages.Count != _lastMessageCount;
+
+        if (firstRender || conversationChanged || messageCountChanged)
+        {
+            _lastConversationId = ConversationId;
+            _lastMessageCount = ChatMessages.Count;
+
+            await ScrollToBottom();
+        }
     }
 
     private async Task Send()

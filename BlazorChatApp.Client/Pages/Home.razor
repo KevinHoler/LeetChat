@@ -5,54 +5,115 @@
 
 <PageTitle>LeetChat</PageTitle>
 
-<div class="login-terminal">
+@if (!_showLogin)
+{
+    <div class="boot-screen" @onclick="ShowLogin">
 
-    <div class="terminal-header">
-        > LEETCHAT SYSTEM LOGIN _
-    </div>
+        <div class="boot-center">
 
-    <EditForm Model="@LoginModel" OnValidSubmit="HandleLogin">
-
-        <DataAnnotationsValidator />
-
-        @if (!string.IsNullOrWhiteSpace(errorMessage))
-        {
-            <div class="terminal-error">
-                ERROR: @errorMessage
+            <div class="boot-line">
+                @bootText<span class="cursor">_</span>
             </div>
-        }
 
-        <div class="terminal-field">
-            <span>> username:</span>
-            <InputText @bind-Value="LoginModel.Username" />
+            <div class="boot-sub">
+                CLICK ANYWHERE TO INITIALIZE
+            </div>
+
         </div>
 
-        <div class="terminal-field">
-            <span>> password:</span>
-            <InputText type="password" @bind-Value="LoginModel.Password" />
+    </div>
+}
+else
+{
+    <div class="login-terminal">
+
+        <div class="terminal-header">
+            > LEETCHAT SYSTEM LOGIN _
         </div>
 
-        <div class="terminal-actions">
-            @if (_isLoading)
+        <EditForm Model="@LoginModel" OnValidSubmit="HandleLogin">
+
+            <DataAnnotationsValidator />
+
+            @if (!string.IsNullOrWhiteSpace(errorMessage))
             {
-                <span class="loading">[ AUTHENTICATING SYSTEM... ]</span>
-            }
-            else
-            {
-                <button type="submit">[ LOGIN ]</button>
+                <div class="terminal-error">
+                    ERROR: @errorMessage
+                </div>
             }
 
-            <NavLink href="/register">[ REGISTER ]</NavLink>
-        </div>
+            <div class="terminal-field">
+                <span>> username:</span>
+                <InputText @bind-Value="LoginModel.Username" />
+            </div>
 
-    </EditForm>
+            <div class="terminal-field">
+                <span>> password:</span>
+                <InputText type="password" @bind-Value="LoginModel.Password" />
+            </div>
 
-</div>
+            <div class="terminal-actions">
+                @if (_isLoading)
+                {
+                    <span class="loading">[ <span> @(_btnHoveredAuth ? LeetifyText.Leetify("AUTHENTICATING") : "AUTHENTICATING") </span> ]</span>
+                }
+                else
+                {
+                    <button type="submit">[ <span @onmouseenter="() => _btnHoveredLogin = true" @onmouseleave="() => _btnHoveredLogin = false">
+                       @(_btnHoveredLogin ? LeetifyText.Leetify("LOGIN") : "LOGIN")
+                    </span> ]</button>
+                }
+
+                <NavLink href="/register">
+                    <span @onmouseenter="() => _btnHoveredRegister = true" @onmouseleave="() => _btnHoveredRegister = false">
+                       [ @(_btnHoveredRegister ? LeetifyText.Leetify("REGISTER") : "REGISTER") ]
+                    </span>
+                </NavLink>
+            </div>
+
+        </EditForm>
+
+    </div>
+}
 
 @code {
+
     private LoginDto LoginModel { get; set; } = new();
+    private bool _btnHoveredRegister = false;
+    private bool _btnHoveredLogin = false;
+    private bool _btnHoveredAuth = false;
+
     private bool _isLoading = false;
     private string? errorMessage = null;
+
+    private bool _showLogin = false;
+
+    private string bootText = "";
+
+    private readonly string[] bootFrames =
+    [
+        "BOOTING LEETCHAT",
+        "B0071N6 L337CH47",
+        "INITIALIZING MATRIX NODE",
+        "ACCESSING DARKNET",
+        "WELCOME TO LEETCHAT"
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (var frame in bootFrames)
+        {
+            bootText = frame;
+            StateHasChanged();
+
+            await Task.Delay(700);
+        }
+    }
+
+    private void ShowLogin()
+    {
+        _showLogin = true;
+    }
 
     private async Task HandleLogin()
     {
@@ -62,19 +123,25 @@
             errorMessage = null;
 
             var response = await HttpClient.PostAsJsonAsync("api/account/login", LoginModel);
+
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
+
                 var authResult = JsonConverter.Deserialize<AuthResponseDto>(content);
+
                 await Auth.LoginAsync(authResult);
+
                 NavigationManager.NavigateTo("/chat");
             }
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
+
                 errorMessage = string.IsNullOrWhiteSpace(errorContent)
                     ? $"Error {response.StatusCode} - {response.ReasonPhrase}"
                     : errorContent;
+
                 _isLoading = false;
             }
         }

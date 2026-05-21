@@ -41,10 +41,14 @@
                     }
                     else
                     {
-                        <button type="submit">[ REGISTER ]</button>
+                        <button type="submit">[ <span @onmouseenter="() => _btnHoveredRegister = true" @onmouseleave="() => _btnHoveredRegister = false">
+                           @(_btnHoveredRegister ? LeetifyText.Leetify("CREATE ACCOUNT") : "CREATE ACCOUNT")
+                        </span> ]</button>
                     }
 
-                    <NavLink href="/">[ LOGIN ]</NavLink>
+                    <NavLink href="/">[ <span @onmouseenter="() => _btnHoveredLogin = true" @onmouseleave="() => _btnHoveredLogin = false">
+                       @(_btnHoveredLogin ? LeetifyText.Leetify("LOGIN") : "LOGIN")
+                    </span> ]</NavLink>
                 </div>
 
             </EditForm>
@@ -59,6 +63,8 @@
 
     private bool _isLoading = false;
     private string? errorMessage = null;
+    private bool _btnHoveredRegister = false;
+    private bool _btnHoveredLogin = false;
 
     private async Task HandleRegister()
     {

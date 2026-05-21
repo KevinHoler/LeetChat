@@ -1,5 +1,4 @@
-﻿// BlazorChatApp/Controllers/ConversationController.cs
-using BlazorChatApp.Data;
+﻿using BlazorChatApp.Data;
 using BlazorChatApp.Data.Entities;
 using BlazorChatApp.Hub;
 using BlazorChatApp.Shared.DTO;

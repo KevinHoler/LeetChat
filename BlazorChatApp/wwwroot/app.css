@@ -229,3 +229,55 @@ input {
 button, input {
     font-family: "Fira Code", monospace;
 }
+
+.boot-screen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    cursor: pointer;
+    animation: fadeIn 1s ease;
+}
+
+.boot-center {
+    text-align: center;
+}
+
+.boot-line {
+    color: #33ff66;
+    font-size: 32px;
+    font-family: "Fira Code", monospace;
+    text-shadow: 0 0 10px #33ff66;
+    letter-spacing: 2px;
+    min-height: 40px;
+}
+
+.boot-sub {
+    margin-top: 30px;
+    opacity: 0.5;
+    animation: pulse 1.5s infinite;
+    font-size: 14px;
+}
+
+.cursor {
+    animation: blink 1s infinite;
+}
+
+@keyframes pulse {
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

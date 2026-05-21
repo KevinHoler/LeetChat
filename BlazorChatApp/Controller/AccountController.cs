@@ -3,7 +3,6 @@ using BlazorChatApp.Data;
 using BlazorChatApp.Shared.DTO;
 using Microsoft.EntityFrameworkCore;
 using BlazorChatApp.Data.Entities;
-using Microsoft.AspNetCore.Identity.Data;
 
 namespace BlazorChatApp.Controller
 {

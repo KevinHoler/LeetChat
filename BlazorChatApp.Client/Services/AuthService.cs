@@ -28,7 +28,7 @@ public class AuthService : IAuthService
                 Load(dto);
             }
         }
-        catch { /* localStorage ej tillgänglig under prerender */ }
+        catch {  }
     }
 
     public async Task LoginAsync(AuthResponseDto dto)

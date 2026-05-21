@@ -13,7 +13,9 @@
 
         <div class="os-user">
             @Auth.Name
-            <button @onclick="Logout">[ EXIT ]</button>
+            <button @onclick="Logout">[ <span @onmouseenter="() => _btnHovered = true" @onmouseleave="() => _btnHovered = false">
+               @(_btnHovered ? LeetifyText.Leetify("EXIT") : "EXIT")
+            </span> ]</button>
         </div>
     </div>
 
@@ -54,6 +56,7 @@
     private List<MessageDto> _messages = new();
     private int? _selectedConversationId;
     private bool _loadingMessages;
+    private bool _btnHovered = false;
 
     protected override async Task OnInitializedAsync()
     {

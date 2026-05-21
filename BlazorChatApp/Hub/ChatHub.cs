@@ -1,5 +1,4 @@
-﻿// BlazorChatApp/Hub/ChatHub.cs
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using BlazorChatApp.Data;
@@ -29,10 +28,8 @@ namespace BlazorChatApp.Hub
         {
             var userId = GetUserId();
 
-            // Personlig grupp – används för att notifiera om nya konversationer
             await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{userId}");
 
-            // Gå med i alla befintliga konversationsgrupper
             var conversationIds = await _db.ConversationParticipants
                 .Where(cp => cp.UserId == userId)
                 .Select(cp => cp.ConversationId)
@@ -44,8 +41,6 @@ namespace BlazorChatApp.Hub
             await base.OnConnectedAsync();
         }
 
-        // Kallas från klienten när en ny konversation skapats (via REST) så att
-        // den inloggade användaren börjar lyssna på den gruppen
         public async Task JoinConversation(int conversationId)
         {
             var userId = GetUserId();

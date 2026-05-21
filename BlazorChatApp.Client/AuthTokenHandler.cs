@@ -1,5 +1,4 @@
-﻿// BlazorChatApp.Client/AuthTokenHandler.cs
-using BlazorChatApp.Client.Services;
+﻿using BlazorChatApp.Client.Services;
 using BlazorChatApp.Client.States;
 using System.Net.Http.Headers;
 
