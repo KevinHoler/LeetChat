@@ -47,6 +47,9 @@ A real-time chat application built with Blazor WebAssembly and ASP.NET Core. It 
 The example configuration is available in `BlazorChatApp/appsettingExample.md`. Replace its placeholder values through user secrets or environment-specific configuration. A JWT signing key should be long, random, and kept private.
 
 For local development, configure .NET user secrets from the server project directory:
+<p align="center">
+  <img src="assets/LeetChatLogin.gif" width="600">
+</p>
 
 ## Project structure
 
