@@ -1,8 +1,8 @@
-<p align="center">
-  <img src="assets/welcometoleetchat.gif" width="600">
-</p>
-# BlazorChatApp
 
+# BlazorChatApp
+<p align="center">
+  <img src="assets/welcometoleetchat.gif" width="800">
+</p>
 A real-time chat application built with Blazor WebAssembly and ASP.NET Core. It provides user registration and login, JWT-based authentication, private conversations, and live messaging through SignalR.
 
 ## Features
@@ -48,7 +48,7 @@ The example configuration is available in `BlazorChatApp/appsettingExample.md`. 
 
 For local development, configure .NET user secrets from the server project directory:
 <p align="center">
-  <img src="assets/LeetChatLogin.gif" width="600">
+  <img src="assets/LeetChatLogin.gif" width="800">
 </p>
 
 ## Project structure
