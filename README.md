@@ -1,5 +1,5 @@
 
-# BlazorChatApp
+# LeetChat
 <p align="center">
   <img src="assets/welcometoleetchat.gif" width="800">
 </p>
