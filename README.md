@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="assets/welcometoleetchat.gif" width="600">
+</p>
 # BlazorChatApp
 
 A real-time chat application built with Blazor WebAssembly and ASP.NET Core. It provides user registration and login, JWT-based authentication, private conversations, and live messaging through SignalR.
